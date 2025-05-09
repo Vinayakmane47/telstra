@@ -1,7 +1,8 @@
+
 fastapi
 uvicorn[standard]
 selenium
-overpy
 jinja2
+overpy
 webdriver-manager
 python-multipart 
