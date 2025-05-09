@@ -1,6 +1,6 @@
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
-
+from selenium.webdriver.chrome.options import Options
 # Install driver only once before threads run
 driver_path = ChromeDriverManager().install()
 
@@ -43,11 +43,16 @@ def fetch_nearby_addresses(lat, lon, radius=1000):
             addresses.append(address)
     return addresses
 
+
+
 def check_single_address(addr, driver_path):
     options = Options()
-    options.add_argument("--headless=new")
-    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--headless=new")  # Or "--headless" for older versions
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
+    options.add_argument("--disable-setuid-sandbox")
+    options.add_argument("--disable-blink-features=AutomationControlled")
 
     service = Service(driver_path)
     driver = webdriver.Chrome(service=service, options=options)
