@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Telstra 5G Checker</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #0078d4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Telstra 5G Availability Checker</h1>
+
+        <div id="content">
+            <form method="post" onsubmit="showLoading()">
+                <label for="lat">Latitude:</label>
+                <input type="text" id="lat" name="lat" required><br><br>
+
+                <label for="lon">Longitude:</label>
+                <input type="text" id="lon" name="lon" required><br><br>
+
+                <label for="n">Number of Addresses:</label>
+                <input type="number" id="n" name="n" required><br><br>
+
+                <label for="workers">Number of Workers:</label>
+                <input type="number" id="workers" name="workers" required><br><br>
+
+                <input type="submit" value="Check 5G Availability">
+            </form>
+
+            {% if results %}
+                <h2>Results:</h2>
+                <ul>
+                    {% for addr, available in results %}
+                        <li>{{ addr }} - <strong>{{ "✅ Available" if available else "❌ Not Available" }}</strong></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Checking availability...</p>
+        </div>
+    </div>
+
+    <script>
+        {% raw %}
+        function showLoading() {
+            document.getElementById("content").style.display = "none";
+            document.getElementById("loading").style.display = "block";
+        }
+        {% endraw %}
+    </script>
+</body>
+</html>

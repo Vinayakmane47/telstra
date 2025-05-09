@@ -1,0 +1,3 @@
+overpy
+selenium
+webdriver-manager
