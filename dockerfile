@@ -1,29 +1,24 @@
-# -------------------------
-# Dockerfile for 5G Checker Web App
-# -------------------------
-
 FROM python:3.11-slim
 
-# Install system packages and Chrome
+# Install Chromium and dependencies
 RUN apt-get update && \
-    apt-get install -y wget curl unzip gnupg2 chromium chromium-driver && \
+    apt-get install -y wget curl gnupg2 unzip \
+    chromium chromium-driver && \
     rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for Chrome
+# Set environment variables
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
-# Set working directory
+# Set workdir
 WORKDIR /app
 
-# Copy all app files
 COPY . .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir fastapi uvicorn selenium overpy jinja2
+# Install Python packages
+RUN pip install --no-cache-dir fastapi uvicorn selenium overpy jinja2 python-multipart webdriver_manager
 
-# Expose FastAPI port
+# Expose the FastAPI port
 EXPOSE 8000
 
-# Run the FastAPI server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

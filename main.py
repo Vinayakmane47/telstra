@@ -1,3 +1,9 @@
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+
+# Install driver only once before threads run
+driver_path = ChromeDriverManager().install()
+
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -11,6 +17,9 @@ import overpy
 import concurrent.futures
 import time
 import os
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+#ChromeDriverManager().install()
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -34,12 +43,15 @@ def fetch_nearby_addresses(lat, lon, radius=1000):
             addresses.append(address)
     return addresses
 
-def check_single_address(addr):
+def check_single_address(addr, driver_path):
     options = Options()
     options.add_argument("--headless=new")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--disable-gpu")
-    driver = webdriver.Chrome(options=options)
+
+    service = Service(driver_path)
+    driver = webdriver.Chrome(service=service, options=options)
+    
     wait = WebDriverWait(driver, 20)
     try:
         driver.get("https://www.telstra.com.au/internet/5g-home-internet")
@@ -74,7 +86,7 @@ def check_single_address(addr):
 def run_parallel_check(addresses, workers):
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = [executor.submit(check_single_address, addr) for addr in addresses]
+        futures = [executor.submit(check_single_address, addr, driver_path) for addr in addresses]
         for future in concurrent.futures.as_completed(futures):
             results.append(future.result())
     return results
