@@ -1,3 +1,7 @@
-overpy
+fastapi
+uvicorn
 selenium
+overpy
+jinja2
 webdriver-manager
+python-multipart 
